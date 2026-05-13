@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Concesionario JSF</title>
+        <h:outputStylesheet library="css" name="primeflex.css" />
+    </h:head>
+    <h:body>
+        <div class="layout-wrapper">
+            <div class="mb-4"> <ui:insert name="header">
+                    <p:menubar>
+                        <p:menuitem value="Inicio" icon="pi pi-home" url="index.xhtml" />
+                        <p:menuitem value="Vehículos" icon="pi pi-directions-car" url="pages/vehiculos.xhtml" />
+                        <p:menuitem value="Clientes" icon="pi pi-users" url="pages/clientes.xhtml" />
+                        <p:menuitem value="Ventas" icon="pi pi-shopping-cart" url="pages/ventas.xhtml" />
+                    </p:menubar>
+                </ui:insert>
+            </div>
+
+            <div class="grid justify-content-center">
+                <div class="col-12 md:col-10">
+                    <ui:insert name="body">
+                        Contenido por defecto
+                    </ui:insert>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center">
+                <p:separator />
+                <h:outputText value="© 2026 Gestión Concesionario" />
+            </div>
+        </div>
+    </h:body>
+</html>

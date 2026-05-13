@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:f="http://java.sun.com/jsf/core"
+                template="/WEB-INF/templates/base.xhtml">
+
+    <ui:define name="body">
+        <h:form id="formListado">
+            <div class="grid">
+                <div class="col-12">
+                    <p:dataTable id="tablaVehiculos" value="#{vehiculoCtrl.listaVehiculos}" var="v" 
+                                 paginator="true" rows="10" rowSelectMode="add"
+                                 paginatorPosition="bottom" styleClass="mt-3">
+                        
+                        <f:facet name="header">
+                            <div class="grid justify-content-between align-items-center">
+                                <span>CATÁLOGO DE STOCK</span>
+                                <p:commandButton value="Refrescar" update="tablaVehiculos" />
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Marca" sortBy="#{v.marca.nombre}">
+                            <h:outputText value="#{v.marca.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Modelo" filterBy="#{v.modelo}">
+                            <h:outputText value="#{v.modelo}"/>
+                        </p:column>
+
+                        <p:column headerText="Matrícula" style="text-align: center">
+                            <h:outputText value="#{v.matricula}" />
+                        </p:column>
+
+                        <p:column headerText="Año" style="text-align: center">
+                            <h:outputText value="#{v.anio}" />
+                        </p:column>
+
+                        <p:column headerText="Precio">
+                            <h:outputText value="#{v.precio}">
+                                <f:convertNumber type="currency" currencySymbol="€" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column headerText="Estado" style="text-align: center">
+                            <h:outputText value="#{v.estado}" 
+                                          styleClass="customer-badge status-#{v.estado.toLowerCase()}"/>
+                        </p:column>
+
+                        <p:column headerText="Acciones">
+                            <p:commandButton title="Detalles" />
+                        </p:column>
+                    </p:dataTable>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
