@@ -27,7 +27,7 @@ public class JpaUtil {
     private static JpaUtil instance = null;
 
     private JpaUtil(){
-        this.emf = Persistence.createEntityManagerFactory("SIGALPU");
+        this.emf = Persistence.createEntityManagerFactory("InstaCarsPU");
     }
 
     /**
@@ -102,7 +102,7 @@ public class JpaUtil {
      */
     public final void forceOpenEntityManagerFactory(){
         closeEntityManagerFactory();        
-        emf = Persistence.createEntityManagerFactory( "SIGALPU" );
+        emf = Persistence.createEntityManagerFactory( "InstaCarsPU" );
     }    
     
     /**

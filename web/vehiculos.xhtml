@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/templates/base.xhtml">
+
+    <ui:define name="body">
+        <p:growl id="growlVehiculos" showDetail="true" life="4000"/>
+
+        <div class="flex justify-content-between align-items-center mb-4">
+            <h2 style="font-weight: 300; margin: 0;">Catálogo de vehículos</h2>
+        </div>
+        <p:dataTable id="tablaVehiculos"
+                     var="v"
+                     value="#{vehiculoBean.vehiculos}"
+                     rowStyleClass="#{v.estado == 'VENDIDO' ? 'fila-vendido' : (v.estado == 'RESERVADO' ? 'fila-reservado' : '')}"
+                     paginator="true"
+                     rows="10"
+                     rowsPerPageTemplate="5,10,25"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords}"
+                     sortMode="single"
+                     emptyMessage="No hay vehículos registrados.">
+
+            <!-- Bastidor -->
+            <p:column headerText="Bastidor" sortBy="#{v.id.numBastidor}">
+                <h:outputText value="#{v.id.numBastidor}"/>
+            </p:column>
+
+            <!-- Marca -->
+            <p:column headerText="Marca" sortBy="#{v.marca.nombre}">
+                <h:outputText value="#{v.marca.nombre}"/>
+            </p:column>
+
+            <!-- Modelo -->
+            <p:column headerText="Modelo" sortBy="#{v.modelo}">
+                <h:outputText value="#{v.modelo}"/>
+            </p:column>
+
+            <!-- Matrícula -->
+            <p:column headerText="Matrícula" sortBy="#{v.matricula}">
+                <h:outputText value="#{v.matricula}"/>
+            </p:column>
+
+            <!-- Año -->
+            <p:column headerText="Año" sortBy="#{v.anio}" style="width: 70px; text-align: center;">
+                <h:outputText value="#{v.anio}"/>
+            </p:column>
+
+            <!-- Kilómetros -->
+            <p:column headerText="Km" sortBy="#{v.km}" style="text-align: right;">
+                <h:outputText value="#{v.km}">
+                    <f:convertNumber groupingUsed="true" maxFractionDigits="0"/>
+                </h:outputText>
+                <h:outputText value=" km" style="color: #888; font-size: 0.85em;"/>
+            </p:column>
+
+            <!-- Precio -->
+            <p:column headerText="Precio" sortBy="#{v.precio}" style="text-align: right;">
+                <h:outputText value="#{v.precio}">
+                    <f:convertNumber type="currency" currencySymbol="€"
+                                     groupingUsed="true" maxFractionDigits="2"
+                                     locale="es"/>
+                </h:outputText>
+            </p:column>
+
+            <!-- Combustible -->
+            <p:column headerText="Combustible" sortBy="#{v.combustible}" style="text-align: center;">
+                <h:outputText value="#{v.combustible}"/>
+            </p:column>
+
+            <!-- Estado -->
+            <p:column headerText="Estado" sortBy="#{v.estado}" style="text-align: center;">
+                <h:outputText value="#{v.estado}"
+                              styleClass="badge-estado badge-#{v.estado}"/>
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+
+</ui:composition>
