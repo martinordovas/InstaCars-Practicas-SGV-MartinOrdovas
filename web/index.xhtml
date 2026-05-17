@@ -7,22 +7,38 @@
                 template="/WEB-INF/templates/base.xhtml">
 
     <ui:define name="body">
-        <h:form>
-            <div class="text-center mb-5"> 
+
+        <!--
+            UN SOLO h:form para toda la página.
+            El p:dialog va DENTRO del form — así los botones del dialog
+            siempre son hijos del <form> en el DOM, sea cual sea la versión
+            de PrimeFaces y aunque el dialog se reposicione con JS.
+            Los h:form anidados no están soportados en HTML y causan el
+            warning "button must be inside a form".
+        -->
+        <h:form id="mainForm">
+
+            <p:growl id="growlIndex" showDetail="true" life="4000"/>
+
+            <div class="text-center mb-5">
                 <h1 style="font-weight: 300;">Panel de Gestión del Concesionario</h1>
             </div>
+
             <div class="grid">
+
                 <div class="col-12 md:col-6 lg:col-4">
                     <p:panel header="STOCK VEHÍCULOS">
                         <div class="flex flex-column">
-                            <p:commandLink action="#{vehiculoCtrl.prepararNuevo}" 
-                                           update=":formNuevoVehiculo"
+                            <p:commandLink action="#{vehiculoCtrl.prepararNuevo}"
+                                           update=":mainForm:dlgVehiculo"
                                            oncomplete="PF('dlgVehiculo').show();"
                                            styleClass="mb-2"
                                            process="@this">
-                                <h:outputText value="Registrar nuevo vehículo" />
+                                <h:outputText value="Registrar nuevo vehículo"/>
                             </p:commandLink>
-                            <p:link outcome="vehiculos.xhtml" value="Ver catálogo de stock" />
+                            <a href="vehiculos.xhtml" style="text-decoration:none; color:#555;">
+                                Ver catálogo de stock
+                            </a>
                         </div>
                     </p:panel>
                 </div>
@@ -30,9 +46,13 @@
                 <div class="col-12 md:col-6 lg:col-4">
                     <p:panel header="CLIENTES">
                         <div class="flex flex-column">
-                            <p:link outcome="index.xhtml" value="Alta de cliente" 
-                                    styleClass="mb-2"/>
-                            <p:link outcome="index.xhtml" value="Cartera de clientes" />
+                            <a href="clientes.xhtml" class="mb-2"
+                               style="text-decoration:none; color:#4caf50; font-weight:bold;">
+                                Alta de cliente
+                            </a>
+                            <a href="clientes.xhtml" style="text-decoration:none; color:#555;">
+                                Cartera de clientes
+                            </a>
                         </div>
                     </p:panel>
                 </div>
@@ -40,9 +60,13 @@
                 <div class="col-12 md:col-6 lg:col-4">
                     <p:panel header="OPERACIONES">
                         <div class="flex flex-column">
-                            <p:link outcome="index.xhtml" value="Registrar Venta" 
-                                    styleClass="mb-2"/>
-                            <p:link outcome="index.xhtml" value="Historial de Facturación" />
+                            <a href="ventas.xhtml" class="mb-2"
+                               style="text-decoration:none; color:#ff9800; font-weight:bold;">
+                                Registrar venta
+                            </a>
+                            <a href="ventas.xhtml" style="text-decoration:none; color:#555;">
+                                Historial de facturación
+                            </a>
                         </div>
                     </p:panel>
                 </div>
@@ -63,76 +87,110 @@
                     </p:fieldset>
                 </div>
             </div>
-        </h:form>
 
-        <p:dialog header="Gestión de Vehículo" 
-                  id="dlgVehiculo" 
-                  widgetVar="dlgVehiculo" 
-                  modal="true" 
-                  responsive="true" 
-                  width="600">
+            <!-- ═══════════════════════════════════════════════════
+                 DIALOG dentro del mismo h:form — los botones son
+                 hijos directos del form en el DOM sin excepción.
+                 ═══════════════════════════════════════════════════ -->
+            <p:dialog id="dlgVehiculo"
+                      header="Gestión de Vehículo"
+                      widgetVar="dlgVehiculo"
+                      modal="true"
+                      responsive="true"
+                      width="600">
 
-            <h:form id="formNuevoVehiculo">
-                <p:messages id="msgsDialog" closable="true" />
+                <p:messages id="msgsDialog" closable="true"/>
 
                 <div class="ui-fluid grid">
+
                     <div class="col-12 md:col-6">
-                        <p:outputLabel for="marca" value="Marca" />
-                        <p:selectOneMenu id="marca" value="#{vehiculoCtrl.nuevoVehiculo.vehiculoPK.idMarca}" required="true">
-                            <f:selectItem itemLabel="Seleccione marca" itemValue="0" noSelectionOption="true"/>
-                            <f:selectItems value="#{vehiculoCtrl.listaMarcas}" var="m" 
-                                           itemLabel="#{m.nombre}" itemValue="#{m.id}" />
+                        <p:outputLabel for="marca" value="Marca"/>
+                        <p:selectOneMenu id="marca"
+                                         value="#{vehiculoCtrl.nuevoVehiculo.vehiculoPK.idMarca}"
+                                         required="true">
+                            <!-- itemValue="0" porque idMarca es int primitivo:
+                                 "" no convierte y el error se pierde en silencio -->
+                            <f:selectItem itemLabel="Seleccione marca" itemValue="0"
+                                          noSelectionOption="true"/>
+                            <f:selectItems value="#{vehiculoCtrl.listaMarcas}" var="m"
+                                           itemLabel="#{m.nombre}" itemValue="#{m.id}"/>
                         </p:selectOneMenu>
-                    </div>
-                    <div class="col-12 md:col-6">
-                        <p:outputLabel for="bastidor" value="Nº Bastidor" />
-                        <p:inputText id="bastidor" value="#{vehiculoCtrl.nuevoVehiculo.vehiculoPK.numBastidor}" 
-                                     required="true" maxlength="17" />
+                        <p:message for="marca"/>
                     </div>
 
                     <div class="col-12 md:col-6">
-                        <p:outputLabel for="modelo" value="Modelo" />
-                        <p:inputText id="modelo" value="#{vehiculoCtrl.nuevoVehiculo.modelo}" required="true" />
+                        <p:outputLabel for="bastidor" value="Nº Bastidor"/>
+                        <p:inputText id="bastidor"
+                                     value="#{vehiculoCtrl.nuevoVehiculo.vehiculoPK.numBastidor}"
+                                     required="true" maxlength="17"/>
+                        <p:message for="bastidor"/>
                     </div>
+
                     <div class="col-12 md:col-6">
-                        <p:outputLabel for="matricula" value="Matrícula" />
-                        <p:inputText id="matricula" value="#{vehiculoCtrl.nuevoVehiculo.matricula}" />
+                        <p:outputLabel for="modelo" value="Modelo"/>
+                        <p:inputText id="modelo"
+                                     value="#{vehiculoCtrl.nuevoVehiculo.modelo}"
+                                     required="true"/>
+                        <p:message for="modelo"/>
+                    </div>
+
+                    <div class="col-12 md:col-6">
+                        <p:outputLabel for="matricula" value="Matrícula"/>
+                        <p:inputText id="matricula"
+                                     value="#{vehiculoCtrl.nuevoVehiculo.matricula}"/>
                     </div>
 
                     <div class="col-12 md:col-4">
-                        <p:outputLabel for="anio" value="Año" />
-                        <p:spinner id="anio" value="#{vehiculoCtrl.nuevoVehiculo.anio}" min="1900" max="2100" />
+                        <p:outputLabel for="anio" value="Año"/>
+                        <p:spinner id="anio"
+                                   value="#{vehiculoCtrl.nuevoVehiculo.anio}"
+                                   min="1900" max="2100"/>
                     </div>
+
                     <div class="col-12 md:col-4">
-                        <p:outputLabel for="combustible" value="Combustible" />
-                        <p:selectOneMenu id="combustible" value="#{vehiculoCtrl.nuevoVehiculo.combustible}">
-                            <f:selectItem itemLabel="Gasolina" itemValue="Gasolina" />
-                            <f:selectItem itemLabel="Diésel" itemValue="Diesel" />
-                            <f:selectItem itemLabel="Eléctrico" itemValue="Electrico" />
-                            <f:selectItem itemLabel="Híbrido" itemValue="Hibrido" />
+                        <p:outputLabel for="combustible" value="Combustible"/>
+                        <p:selectOneMenu id="combustible"
+                                         value="#{vehiculoCtrl.nuevoVehiculo.combustible}">
+                            <f:selectItem itemLabel="Gasolina"  itemValue="GASOLINA"/>
+                            <f:selectItem itemLabel="Diésel"    itemValue="DIESEL"/>
+                            <f:selectItem itemLabel="Eléctrico" itemValue="ELECTRICO"/>
+                            <f:selectItem itemLabel="Híbrido"   itemValue="HIBRIDO"/>
                         </p:selectOneMenu>
                     </div>
+
                     <div class="col-12 md:col-4">
-                        <p:outputLabel for="precio" value="Precio" />
-                        <p:inputNumber id="precio" value="#{vehiculoCtrl.nuevoVehiculo.precio}" symbol=" €" symbolPosition="s" />
+                        <p:outputLabel for="precio" value="Precio"/>
+                        <p:inputNumber id="precio"
+                                       value="#{vehiculoCtrl.nuevoVehiculo.precio}"
+                                       symbol=" €" symbolPosition="s"/>
+                        <p:message for="precio"/>
                     </div>
 
                     <div class="col-12">
-                        <p:outputLabel for="descripcion" value="Descripción" />
-                        <p:inputTextarea id="descripcion" value="#{vehiculoCtrl.nuevoVehiculo.descripcion}" rows="3" />
+                        <p:outputLabel for="descripcion" value="Descripción"/>
+                        <p:inputTextarea id="descripcion"
+                                         value="#{vehiculoCtrl.nuevoVehiculo.descripcion}"
+                                         rows="3"/>
                     </div>
+
                 </div>
 
                 <div class="flex justify-content-end gap-2 mt-3">
-                    <p:commandButton value="Cancelar" icon="pi pi-times" 
-                                     onclick="PF('dlgVehiculo').hide();" 
-                                     styleClass="ui-button-flat" process="@this" />
-                    <p:commandButton value="Guardar Vehículo" icon="pi pi-check" 
-                                     action="#{vehiculoCtrl.save}" 
-                                     update="formNuevoVehiculo" />
+                    <p:commandButton value="Cancelar"
+                                     icon="pi pi-times"
+                                     onclick="PF('dlgVehiculo').hide();"
+                                     styleClass="ui-button-flat"
+                                     process="@none"/>
+                    <p:commandButton value="Guardar Vehículo"
+                                     icon="pi pi-check"
+                                     action="#{vehiculoCtrl.save}"
+                                     process="@form"
+                                     update=":mainForm:msgsDialog :mainForm:growlIndex"/>
                 </div>
-            </h:form>
-        </p:dialog>
+
+            </p:dialog>
+
+        </h:form>
 
     </ui:define>
 

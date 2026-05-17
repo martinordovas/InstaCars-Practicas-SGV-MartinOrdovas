@@ -33,7 +33,10 @@ public class VehiculoCtrl implements Serializable {
     public void prepararNuevo() {
         this.nuevoVehiculo = new Vehiculo();
         this.nuevoVehiculo.setVehiculoPK(new VehiculoPK());
-        this.nuevoVehiculo.setEstado("DISPONIBLE");
+        this.nuevoVehiculo.setEstado("EN_VENTA");
+        nuevoVehiculo.setAnio((short) java.util.Calendar.getInstance()
+                                     .get(java.util.Calendar.YEAR));
+        edit = false;
     }
     
     public String save() {
@@ -45,12 +48,13 @@ public class VehiculoCtrl implements Serializable {
             }
 
             if (edit) {
-                dao.update(vehiculo);
+                dao.update(nuevoVehiculo);
             } else {
-                dao.create(vehiculo);
+                dao.create(nuevoVehiculo);
             }
             dao.commitTransaction();
             PrimeFaces.current().executeScript("PF('dlgVehiculo').hide();");
+            prepararNuevo();
             return "listadoVehiculos?faces-redirect=true";
         } catch (Exception e) {
             return null;
